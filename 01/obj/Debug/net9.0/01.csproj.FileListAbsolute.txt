@@ -1,0 +1,15 @@
+C:\Users\lumas\Documents\Programming\AOC\2025\01\bin\Debug\net9.0\01.exe
+C:\Users\lumas\Documents\Programming\AOC\2025\01\bin\Debug\net9.0\01.deps.json
+C:\Users\lumas\Documents\Programming\AOC\2025\01\bin\Debug\net9.0\01.runtimeconfig.json
+C:\Users\lumas\Documents\Programming\AOC\2025\01\bin\Debug\net9.0\01.dll
+C:\Users\lumas\Documents\Programming\AOC\2025\01\bin\Debug\net9.0\01.pdb
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.AssemblyInfoInputs.cache
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.AssemblyInfo.cs
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.csproj.CoreCompileInputs.cache
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.sourcelink.json
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.dll
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\refint\01.dll
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.pdb
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\01.genruntimeconfig.cache
+C:\Users\lumas\Documents\Programming\AOC\2025\01\obj\Debug\net9.0\ref\01.dll
