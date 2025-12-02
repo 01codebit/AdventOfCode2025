@@ -1,98 +1,59 @@
-﻿namespace Day_01
+﻿using Model;
+
+namespace Day_01
 {
-    public enum EDirection
+    public class Program : Common.IRunnablePart
     {
-        Left,
-        Right
-    }
-
-    public struct Rotation(EDirection direction, int value)
-    {
-        public EDirection Direction = direction;
-        public int Value = value;
-
-        public override readonly string ToString()
-        {
-            var directionChar = Direction == EDirection.Left ? 'L' : 'R';
-            return $"{directionChar}{Value}";
-        }
-    
-        public static Rotation FromString(string input)
-        {
-            EDirection direction = input[0] == 'L' ? EDirection.Left 
-                : input[0] == 'R' ? EDirection.Right 
-                : throw new ArgumentException("Invalid direction");
-        
-            int value = int.Parse(input.Substring(1));
-
-            return new Rotation(direction, value);
-        }
-    }
-
-
-    public class Program
-    {
-        private static readonly string FilePath = "input.txt";
-        private static readonly List<Rotation> Rotations = new();
+        private static string _defaultFileName = "input_test.txt";
+        private static List<Rotation> _rotations = new();
         private static int _maxValue = 100;
         private static int _startingValue = 50;
         private static int _currentValue = 0;
         private static int _result = 0;
-        private static readonly bool _debug = false;
-
+        private static bool _debug = false;
 
         private static void PrintResult()
         {
-            Console.WriteLine($"Result: {_result}");
+            Console.WriteLine($"[Program.PrintResult] Result: {_result}");
         }
 
-        public static void Main(string[] args)
+        public static async Task Run(string[] args)
         {
-            Console.WriteLine("[Start] --------");
+            var fn = _defaultFileName;
+            if (args.Length > 0)
+            {
+                fn = args[0];
 
-            ReadInputFile();
+                if (args.Length > 1)
+                {
+                    _debug = args[1] == "debug";
+                }
+            }
+
+            var currentFolder = Directory.GetCurrentDirectory() + "\\01\\";
+            var filePath = Path.Combine(currentFolder, fn);
+            _rotations = await Utils.FileUtils.ReadTextFileAsync<Rotation>(
+                filePath,
+                new[] { '\r', '\n' },
+                false
+            );
 
             PartOneCount();
-            Console.WriteLine("Part One:");
+            Console.WriteLine("[Program.Run] Part One:");
             PrintResult();
 
             _result = 0; // Reset result for part two
 
             PartTwoCount();
-            Console.WriteLine("Part Two:");
+            Console.WriteLine("[Program.Run] Part Two:");
             PrintResult();
-
-            Console.WriteLine("[End] ----------");
-        }
-
-        private static void ReadInputFile()
-        {
-            Console.WriteLine("Reading input file...");
-
-            try
-            {
-                string content = File.ReadAllText(FilePath);
-
-                content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    .ToList()
-                    .ForEach(line =>
-                    {
-                        Rotation rotation = Rotation.FromString(line);
-                        // Console.WriteLine(rotation.ToString());
-                        Rotations.Add(rotation);
-                    });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred while reading the file: {ex.Message}");
-            }
         }
 
         private static void PartOneCount()
         {
             _currentValue = _startingValue;
 
-            foreach (var rotation in Rotations)
+            foreach (var rotation in _rotations)
             {
                 if (rotation.Direction == EDirection.Left)
                 {
@@ -110,7 +71,7 @@
 
                 _currentValue %= _maxValue;
 
-                if( _currentValue == 0)
+                if (_currentValue == 0)
                 {
                     _result++;
                 }
@@ -120,10 +81,12 @@
         private static void PartTwoCount()
         {
             _currentValue = _startingValue;
-            if(_debug) Console.WriteLine($"Part Two --------------------------------------");
-            if(_debug) Console.WriteLine($"  - The dial starts by pointing at {_currentValue}.");
+            if (_debug)
+                Console.WriteLine($"Part Two --------------------------------------");
+            if (_debug)
+                Console.WriteLine($"  - The dial starts by pointing at {_currentValue}.");
 
-            foreach (var rotation in Rotations)
+            foreach (var rotation in _rotations)
             {
                 var sign = rotation.Direction == EDirection.Left ? -1 : 1;
 
@@ -131,34 +94,42 @@
                 _currentValue += sign * rotation.Value % _maxValue;
                 var passes = rotation.Value / _maxValue;
 
-                if(_currentValue < 0)
+                if (_currentValue < 0)
                 {
-                    if(prevValue > 0) passes++;
+                    if (prevValue > 0)
+                        passes++;
                     _currentValue += _maxValue;
                 }
-                else if(_currentValue > _maxValue)
+                else if (_currentValue > _maxValue)
                 {
                     passes++;
                     _currentValue %= _maxValue;
                 }
-                else if(_currentValue == _maxValue)
+                else if (_currentValue == _maxValue)
                 {
                     _currentValue %= _maxValue;
                 }
 
                 _result += passes;
 
-                if(_debug) 
+                if (_debug)
                 {
-                    if(passes > 0)
-                        Console.WriteLine($"  - The dial is rotated {rotation} to point at {_currentValue}; during this rotation it points at 0 {passes}.");
+                    if (passes > 0)
+                        Console.WriteLine(
+                            $"  - The dial is rotated {rotation} to point at {_currentValue}; during this rotation it points at 0 {passes}."
+                        );
                     else
-                        Console.WriteLine($"  - The dial is rotated {rotation} to point at {_currentValue}.");
+                        Console.WriteLine(
+                            $"  - The dial is rotated {rotation} to point at {_currentValue}."
+                        );
                 }
 
-                if( _currentValue == 0)
+                if (_currentValue == 0)
                 {
-                    if(_debug) Console.WriteLine($"    - The dial is rotated {rotation} to point at {_currentValue}.");
+                    if (_debug)
+                        Console.WriteLine(
+                            $"    - The dial is rotated {rotation} to point at {_currentValue}."
+                        );
                     _result++;
                 }
             }
