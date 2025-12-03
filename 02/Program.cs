@@ -3,11 +3,10 @@ using Model;
 
 namespace Day_02
 {
-    public class Program : Common.IRunnablePart
+    public class Program : IRunnablePart
     {
-        private static readonly string _defaultFileName = "input.txt";
         private static long _result = 0;
-        private static List<LongRange> _ranges = new List<LongRange>();
+        private static List<LongRange> _ranges = [];
         private static bool _debug = false;
 
         private static void PrintResult()
@@ -17,20 +16,15 @@ namespace Day_02
 
         public static async Task Run(string[] args)
         {
-            var fn = _defaultFileName;
-            if (args.Length > 0)
+            if (args.Length < 2)
             {
-                fn = args[0];
-
-                if (args.Length > 1)
-                {
-                    _debug = args[1] == "debug";
-                }
+                throw new ArgumentException("Please provide the input file path as an argument.");
             }
 
-            var currentFolder = Directory.GetCurrentDirectory() + "\\02\\";
-            var filePath = Path.Combine(currentFolder, fn);
-            _ranges = await Utils.FileUtils.ReadTextFileAsync<LongRange>(filePath, ',', _debug);
+            var filePath = args[0];
+            _debug = args[1] == "debug";
+
+            _ranges = await Utils.FileUtils.ReadListFromFileAsync<LongRange>(filePath, ',', _debug);
 
             PartOneCount();
             Console.WriteLine("[Program.Run] Part One:");
@@ -41,29 +35,6 @@ namespace Day_02
             PartTwoCount();
             Console.WriteLine("[Program.Run] Part Two:");
             PrintResult();
-        }
-
-        private static async Task ReadFile(string filePath)
-        {
-            try
-            {
-                string content = await File.ReadAllTextAsync(filePath);
-
-                content
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .ToList()
-                    .ForEach(line =>
-                    {
-                        LongRange range = LongRange.FromString(line);
-                        if (_debug)
-                            Console.WriteLine(range.ToString());
-                        _ranges.Add(range);
-                    });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred while reading the file: {ex.Message}");
-            }
         }
 
         private static void PartOneCount()

@@ -1,11 +1,11 @@
-﻿using Model;
+﻿using Common;
+using Model;
 
 namespace Day_01
 {
-    public class Program : Common.IRunnablePart
+    public class Program : IRunnablePart
     {
-        private static string _defaultFileName = "input_test.txt";
-        private static List<Rotation> _rotations = new();
+        private static List<Rotation> _rotations = [];
         private static int _maxValue = 100;
         private static int _startingValue = 50;
         private static int _currentValue = 0;
@@ -19,22 +19,17 @@ namespace Day_01
 
         public static async Task Run(string[] args)
         {
-            var fn = _defaultFileName;
-            if (args.Length > 0)
+            if (args.Length < 2)
             {
-                fn = args[0];
-
-                if (args.Length > 1)
-                {
-                    _debug = args[1] == "debug";
-                }
+                throw new ArgumentException("Please provide the input file path as an argument.");
             }
 
-            var currentFolder = Directory.GetCurrentDirectory() + "\\01\\";
-            var filePath = Path.Combine(currentFolder, fn);
-            _rotations = await Utils.FileUtils.ReadTextFileAsync<Rotation>(
+            var filePath = args[0];
+            _debug = args[1] == "debug";
+
+            _rotations = await Utils.FileUtils.ReadListFromFileAsync<Rotation>(
                 filePath,
-                new[] { '\r', '\n' },
+                ['\r', '\n'],
                 false
             );
 
@@ -81,10 +76,12 @@ namespace Day_01
         private static void PartTwoCount()
         {
             _currentValue = _startingValue;
+
             if (_debug)
+            {
                 Console.WriteLine($"Part Two --------------------------------------");
-            if (_debug)
                 Console.WriteLine($"  - The dial starts by pointing at {_currentValue}.");
+            }
 
             foreach (var rotation in _rotations)
             {
@@ -94,34 +91,24 @@ namespace Day_01
                 _currentValue += sign * rotation.Value % _maxValue;
                 var passes = rotation.Value / _maxValue;
 
+                if ((_currentValue < 0 && prevValue > 0) || _currentValue > _maxValue)
+                    passes++;
+                _result += passes;
+
                 if (_currentValue < 0)
                 {
-                    if (prevValue > 0)
-                        passes++;
                     _currentValue += _maxValue;
                 }
-                else if (_currentValue > _maxValue)
-                {
-                    passes++;
-                    _currentValue %= _maxValue;
-                }
-                else if (_currentValue == _maxValue)
+                else if (_currentValue >= _maxValue)
                 {
                     _currentValue %= _maxValue;
                 }
-
-                _result += passes;
 
                 if (_debug)
                 {
-                    if (passes > 0)
-                        Console.WriteLine(
-                            $"  - The dial is rotated {rotation} to point at {_currentValue}; during this rotation it points at 0 {passes}."
-                        );
-                    else
-                        Console.WriteLine(
-                            $"  - The dial is rotated {rotation} to point at {_currentValue}."
-                        );
+                    string msg = $"  - The dial is rotated {rotation} to point at {_currentValue}";
+                    msg += passes > 0 ? $"; during this rotation it points at 0 {passes}." : ".";
+                    Console.WriteLine(msg);
                 }
 
                 if (_currentValue == 0)

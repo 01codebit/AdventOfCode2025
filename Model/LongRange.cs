@@ -4,8 +4,8 @@ namespace Model;
 
 public struct LongRange(long start, long end) : IReadableString<LongRange>
 {
-    public long Start = start;
-    public long End = end;
+    public long Start { get; set; } = start;
+    public long End { get; set; } = end;
 
     public static LongRange FromString(string input)
     {

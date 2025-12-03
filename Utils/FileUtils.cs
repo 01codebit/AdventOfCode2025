@@ -2,7 +2,24 @@ namespace Utils;
 
 public static class FileUtils
 {
-    public static async Task<List<T>> ReadTextFileAsync<T>(
+    public static async Task<string> ReadTextFileAsync(string path)
+    {
+        string content = "";
+        try
+        {
+            content = await File.ReadAllTextAsync(path);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"[FileUtils.ReadTextFileAsync] An error occurred while reading the file: {ex.Message}"
+            );
+        }
+
+        return content;
+    }
+
+    public static async Task<List<T>> ReadListFromFileAsync<T>(
         string filePath,
         char[] separators,
         bool debug = false
@@ -23,8 +40,6 @@ public static class FileUtils
                 .ForEach(line =>
                 {
                     T obj = T.FromString(line);
-                    // if (debug)
-                    //      Console.WriteLine(obj.ToString());
                     results.Add(obj);
                 });
         }
@@ -36,13 +51,13 @@ public static class FileUtils
         return results;
     }
 
-    public static async Task<List<T>> ReadTextFileAsync<T>(
+    public static async Task<List<T>> ReadListFromFileAsync<T>(
         string filePath,
         char separator,
         bool debug = false
     )
         where T : Common.IReadableString<T>
     {
-        return await ReadTextFileAsync<T>(filePath, new[] { separator }, debug);
+        return await ReadListFromFileAsync<T>(filePath, new[] { separator }, debug);
     }
 }
