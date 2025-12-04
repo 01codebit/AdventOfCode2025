@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Common;
 using Model;
 
@@ -7,13 +8,10 @@ namespace Day_03
     public class Program : IRunnablePart
     {
         private static long _result = 0;
+        private static BigInteger _resultTwo = 0;
+
         private static List<BatteryBank> _banks = [];
         private static bool _debug = false;
-
-        private static void PrintResult()
-        {
-            Console.WriteLine($"[Program.PrintResult] Result: {_result}");
-        }
 
         public static async Task Run(string[] args)
         {
@@ -31,15 +29,27 @@ namespace Day_03
                 _debug
             );
 
-            PartOneCount();
             Console.WriteLine("[Program.Run] Part One:");
-            PrintResult();
+            PartOneCount();
+            Console.WriteLine($"[Program.PrintResult] Result: {_result}");
 
-            _result = 0; // Reset result for part two
+            var digits = 12;
 
-            PartTwoCount();
             Console.WriteLine("[Program.Run] Part Two:");
-            PrintResult();
+            await PartTwoCount(digits);
+            Console.WriteLine($"[Program.PrintResult] Result: {_resultTwo}");
+
+            if (digits == 2)
+            {
+                if (_resultTwo == _result)
+                {
+                    Console.WriteLine("[Program.Run] SUCCESS !!!");
+                }
+                else
+                {
+                    Console.WriteLine("[Program.Run] FAILURE !!!");
+                }
+            }
         }
 
         private static void PartOneCount()
@@ -73,16 +83,19 @@ namespace Day_03
             return joltage;
         }
 
-        private static void PartTwoCount()
+        private static async Task PartTwoCount(int digits = 2)
         {
+            var b = 0;
             foreach (var bank in _banks)
             {
-                var j = BankJoltageTwo(bank);
+                b++;
+                Log($"[Program.PartTwoCount] ---- Processing bank #{b}/{_banks.Count}");
+                var j = await BankJoltageTwoAsync(bank, digits);
                 if (_debug)
                     Console.WriteLine(
                         $"[Program.PartTwoCount] Bank {bank} joltage calculated: {j}"
                     );
-                _result += j;
+                _resultTwo += j;
             }
         }
 
@@ -93,41 +106,6 @@ namespace Day_03
                 Console.WriteLine(message);
             }
         }
-
-        private static long BankJoltageTwo_OLD(BatteryBank bank, int digits = 2)
-        {
-            if (digits > bank.Size)
-            {
-                throw new ArgumentException("Digits cannot be greater than bank size");
-            }
-
-            long joltage = 0;
-
-            int[] deltas = InitDeltas(digits);
-            Log($"Initialized deltas: {string.Join(", ", deltas)}");
-
-            int maxDelta = bank.Size - digits;
-
-            for (var d = 0; d < maxDelta; d++)
-            {
-                var currentMaxDelta = d;
-                deltas[digits - 1] = currentMaxDelta;
-
-                for (var i = digits - 2; i > 0; i--)
-                {
-                    //         for(var toAdd=0; toAdd <= currentMaxDelta; toAdd++)
-                    //         {
-                    //             deltas[i] = toAdd;
-                    //         }
-
-                }
-            }
-
-            joltage = ComputeJoltageFromDeltas(bank, deltas);
-            Log($"Return joltage: {joltage}");
-            return joltage;
-        }
-
 
         private static int[] InitIndexes(int size, int digits)
         {
@@ -145,20 +123,9 @@ namespace Day_03
             return indexes;
         }
 
-        private static int[] InitDeltas(int digits)
+        private static BigInteger ComputeJoltageFromIndexes(BatteryBank bank, int[] indexes)
         {
-            int[] deltas = new int[digits];
-            for (var i = 0; i < digits; i++)
-            {
-                deltas[i] = 0;
-            }
-
-            return deltas;
-        }
-
-        private static long ComputeJoltageFromIndexes(BatteryBank bank, int[] indexes)
-        {
-            long joltage = 0;
+            BigInteger joltage = 0;
             int digits = indexes.Length;
 
             for (var y = 0; y < digits; y++)
@@ -170,113 +137,111 @@ namespace Day_03
             return joltage;
         }
 
-        private static long ComputeJoltageFromDeltas(BatteryBank bank, int[] deltas)
+        private static BigInteger Factorial(BigInteger number)
         {
-            long joltage = 0;
-            int digits = deltas.Length;
-
-            for (var d = 0; d < digits; d++)
+            if (number < 0)
             {
-                var currentDigit = bank.Cells[d + deltas[d]];
-                joltage += currentDigit * (long)Math.Pow(10, digits - d - 1);
+                throw new ArgumentException("Number must be non-negative");
             }
 
-            return joltage;
+            BigInteger result = 1;
+            for (BigInteger i = 2; i <= number; i++)
+            {
+                result *= i;
+            }
+
+            Console.WriteLine($"Factorial of {number} is {result}");
+            return result;
         }
 
+        public static BigInteger Combinations(BigInteger n, BigInteger k)
+        {
+            Log($"[Combinations] Calculating C({n},{k})");
+            // if (k > n)
+            //     return 0;
+            // if (k == 0 || k == n)
+            //     return 1;
 
-        private static long BankJoltageTwo(BatteryBank bank, int digits = 2)
+            // BigInteger num = Factorial(n);
+            // BigInteger denom = Factorial(k) * Factorial(n - k);
+
+            // Log($"[Combinations] C({n},{k}) = {num} / {denom} = {num / denom}");
+            // return num / denom;
+
+            BigInteger numerator = 1;
+            BigInteger denominator = 1;
+
+            for (int i = 0; i < k; i++)
+            {
+                numerator *= (n - i);
+                denominator *= (i + 1);
+            }
+
+            return numerator / denominator;
+        }
+
+        private static async Task<BigInteger> BankJoltageTwoAsync(BatteryBank bank, int digits = 2)
         {
             if (digits > bank.Size)
             {
-                throw new ArgumentException("Digits cannot be greater than bank size");
+                throw new ArgumentException(
+                    $"Digits ({digits}) cannot be greater than bank size ({bank.Size})"
+                );
             }
 
-            Log($"[BankJoltageTwo] Starting calculation for bank {bank} with digits {digits}");
+            Log($"[BankJoltageTwo] ---- Starting calculation for bank {bank} with digits {digits}");
+
+            // compute the number of combinations of digits numbers in bank.Size
+            var combinations = Combinations((BigInteger)bank.Size, (BigInteger)digits);
+            Log($"[BankJoltageTwo] ---- Number of combinations: {combinations}");
 
             // init
-            long joltage = 0;
             int[] indexes = InitIndexes(bank.Size, digits);
-            Log($"Initialized indexes: {string.Join(", ", indexes)}");
-
-            joltage = ComputeJoltageFromIndexes(bank, indexes);
-
-            var currentIndex = indexes.Length - 1;
+            BigInteger joltage = 0;
             var maxIndex = bank.Size - 1;
-
-            while (GoOnComputation(indexes, maxIndex))
+            var count = 0;
+            do
             {
-                Log($"Indexes at start of loop: {string.Join(", ", indexes)}");
-
-                if (IncrementLastIndex(indexes, maxIndex))
-                {
-                    Log($"Indexes after IncrementLastIndex: {string.Join(", ", indexes)}");
-                    joltage = Math.Max(joltage, ComputeJoltageFromIndexes(bank, indexes));
-                }
-                else
-                {
-                    if (IncrementIndexN(indexes, currentIndex))
-                    {
-                        Log($"Indexes after IncrementIndexN: {string.Join(", ", indexes)}");
-                        joltage = Math.Max(joltage, ComputeJoltageFromIndexes(bank, indexes));
-                    }
-                    else
-                    {
-                        if (currentIndex > 0)
-                        {
-                            currentIndex--;
-                        }
-                    }
-                }
-            }
-
-            Log($"Return joltage: {joltage}");
+                count++;
+                Log(
+                    $"    [BankJoltageTwo] #{count} current indexes: [{string.Join(",", indexes)}]"
+                );
+                joltage = BigInteger.Max(joltage, ComputeJoltageFromIndexes(bank, indexes));
+            } while (IncrementIndexes(indexes, maxIndex));
+            Log($"  [BankJoltageTwo] made {count} iterations.");
+            Log($"  [BankJoltageTwo] ---> Return joltage: {joltage}");
             return joltage;
         }
 
-        private static bool GoOnComputation(int[] indexes, int maxIndex)
+        private static bool IncrementIndexes(int[] indexes, int maxIndex)
         {
-            if (indexes[indexes.Length - 1] != maxIndex)
-                return false;
-            
-            for (var i = indexes.Length - 2; i > 0; i--)
+            var maxFirstIndex = maxIndex - indexes.Length + 1;
+            if (indexes[0] == maxFirstIndex)
             {
-                if (indexes[i] != indexes[i+1] - 1)
+                return false;
+            }
+
+            var currentIndex = indexes.Length - 1;
+            for (var i = 0; i < indexes.Length - 1; i++)
+            {
+                if (indexes[i] < indexes[i + 1] - 1)
                 {
-                    return false;
+                    currentIndex = i;
+                    break;
                 }
+            }
+            indexes[currentIndex]++;
+            if (currentIndex == indexes.Length - 1 && indexes[currentIndex] > maxIndex)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < currentIndex; i++)
+            {
+                indexes[i] = i;
             }
 
             return true;
         }
-
-        private static bool IncrementLastIndex(int[] indexes, int maxIndex)
-        {
-            var lastPos = indexes.Length - 1;
-            if (indexes[lastPos] < maxIndex)
-            {
-                indexes[lastPos]++;
-
-                for (var i = 0; i < lastPos; i++)
-                {
-                    indexes[i] = i;
-                }
-
-                return true;
-            }
-            return false;
-        }
-
-        private static bool IncrementIndexN(int[] indexes, int currentIndex)
-        {
-            if (indexes[currentIndex] < indexes[currentIndex + 1])
-            {
-                indexes[currentIndex]++;
-                return true;
-            }
-            return false;
-        }
-
-
     }
 }
