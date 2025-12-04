@@ -1,3 +1,4 @@
+using System;
 using Common;
 using Model;
 
@@ -93,7 +94,7 @@ namespace Day_03
             }
         }
 
-        private static long BankJoltageTwo(BatteryBank bank, int digits = 2)
+        private static long BankJoltageTwo_OLD(BatteryBank bank, int digits = 2)
         {
             if (digits > bank.Size)
             {
@@ -107,17 +108,17 @@ namespace Day_03
 
             int maxDelta = bank.Size - digits;
 
-            for(var d=0; d<maxDelta; d++)
+            for (var d = 0; d < maxDelta; d++)
             {
                 var currentMaxDelta = d;
-                deltas[digits-1] = currentMaxDelta;
+                deltas[digits - 1] = currentMaxDelta;
 
-                for(var i=digits-2; i>0; i--)
+                for (var i = digits - 2; i > 0; i--)
                 {
-            //         for(var toAdd=0; toAdd <= currentMaxDelta; toAdd++)
-            //         {
-            //             deltas[i] = toAdd;
-            //         }
+                    //         for(var toAdd=0; toAdd <= currentMaxDelta; toAdd++)
+                    //         {
+                    //             deltas[i] = toAdd;
+                    //         }
 
                 }
             }
@@ -182,5 +183,100 @@ namespace Day_03
 
             return joltage;
         }
+
+
+        private static long BankJoltageTwo(BatteryBank bank, int digits = 2)
+        {
+            if (digits > bank.Size)
+            {
+                throw new ArgumentException("Digits cannot be greater than bank size");
+            }
+
+            Log($"[BankJoltageTwo] Starting calculation for bank {bank} with digits {digits}");
+
+            // init
+            long joltage = 0;
+            int[] indexes = InitIndexes(bank.Size, digits);
+            Log($"Initialized indexes: {string.Join(", ", indexes)}");
+
+            joltage = ComputeJoltageFromIndexes(bank, indexes);
+
+            var currentIndex = indexes.Length - 1;
+            var maxIndex = bank.Size - 1;
+
+            while (GoOnComputation(indexes, maxIndex))
+            {
+                Log($"Indexes at start of loop: {string.Join(", ", indexes)}");
+
+                if (IncrementLastIndex(indexes, maxIndex))
+                {
+                    Log($"Indexes after IncrementLastIndex: {string.Join(", ", indexes)}");
+                    joltage = Math.Max(joltage, ComputeJoltageFromIndexes(bank, indexes));
+                }
+                else
+                {
+                    if (IncrementIndexN(indexes, currentIndex))
+                    {
+                        Log($"Indexes after IncrementIndexN: {string.Join(", ", indexes)}");
+                        joltage = Math.Max(joltage, ComputeJoltageFromIndexes(bank, indexes));
+                    }
+                    else
+                    {
+                        if (currentIndex > 0)
+                        {
+                            currentIndex--;
+                        }
+                    }
+                }
+            }
+
+            Log($"Return joltage: {joltage}");
+            return joltage;
+        }
+
+        private static bool GoOnComputation(int[] indexes, int maxIndex)
+        {
+            if (indexes[indexes.Length - 1] != maxIndex)
+                return false;
+            
+            for (var i = indexes.Length - 2; i > 0; i--)
+            {
+                if (indexes[i] != indexes[i+1] - 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool IncrementLastIndex(int[] indexes, int maxIndex)
+        {
+            var lastPos = indexes.Length - 1;
+            if (indexes[lastPos] < maxIndex)
+            {
+                indexes[lastPos]++;
+
+                for (var i = 0; i < lastPos; i++)
+                {
+                    indexes[i] = i;
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+        private static bool IncrementIndexN(int[] indexes, int currentIndex)
+        {
+            if (indexes[currentIndex] < indexes[currentIndex + 1])
+            {
+                indexes[currentIndex]++;
+                return true;
+            }
+            return false;
+        }
+
+
     }
 }
