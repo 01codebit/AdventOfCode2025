@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using Common;
 using Model;
+using Utils;
 
 namespace Day_03
 {
@@ -11,22 +12,19 @@ namespace Day_03
         private static BigInteger _resultTwo = 0;
 
         private static List<BatteryBank> _banks = [];
-        private static bool _debug = false;
 
         public static async Task Run(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
                 throw new ArgumentException("Please provide the input file path as an argument.");
             }
 
             var filePath = args[0];
-            _debug = args[1] == "debug";
 
             _banks = await Utils.FileUtils.ReadListFromFileAsync<BatteryBank>(
                 filePath,
-                ['\r', '\n'],
-                _debug
+                ['\r', '\n']
             );
 
             Console.WriteLine("[Program.Run] Part One:");
@@ -36,7 +34,7 @@ namespace Day_03
             var digits = 12;
 
             Console.WriteLine("[Program.Run] Part Two:");
-            await PartTwoCount(digits);
+            PartTwoCount(digits);
             Console.WriteLine($"[Program.PrintResult] Result: {_resultTwo}");
 
             if (digits == 2)
@@ -57,10 +55,7 @@ namespace Day_03
             foreach (var bank in _banks)
             {
                 var j = BankJoltage(bank);
-                if (_debug)
-                    Console.WriteLine(
-                        $"[Program.PartOneCount] Bank {bank} joltage calculated: {j}"
-                    );
+                Logger.Log($"[Program.PartOneCount] Bank {bank} joltage calculated: {j}");
                 _result += j;
             }
         }
@@ -83,27 +78,16 @@ namespace Day_03
             return joltage;
         }
 
-        private static async Task PartTwoCount(int digits = 2)
+        private static void PartTwoCount(int digits = 2)
         {
             var b = 0;
             foreach (var bank in _banks)
             {
                 b++;
-                Log($"[Program.PartTwoCount] ---- Processing bank #{b}/{_banks.Count}");
-                var j = await BankJoltageTwoAsync(bank, digits);
-                if (_debug)
-                    Console.WriteLine(
-                        $"[Program.PartTwoCount] Bank {bank} joltage calculated: {j}"
-                    );
+                Console.WriteLine($"[Program.PartTwoCount] ---- Processing bank #{b}/{_banks.Count}");
+                var j = BankJoltageTwoAsync(bank, digits);
+                Logger.Log($"[Program.PartTwoCount] Bank {bank} joltage calculated: {j}");
                 _resultTwo += j;
-            }
-        }
-
-        private static void Log(string message)
-        {
-            if (_debug)
-            {
-                Console.WriteLine(message);
             }
         }
 
@@ -123,6 +107,41 @@ namespace Day_03
             return indexes;
         }
 
+        private static Dictionary<int, BigInteger> _powCache = new();
+
+        private static BigInteger Pow10(int exponent)
+        {
+            if (_powCache.ContainsKey(exponent))
+            {
+                return _powCache[exponent];
+            }
+
+            BigInteger result = BigInteger.Pow(10, exponent);
+            _powCache[exponent] = result;
+            return result;
+        }
+
+        private static Dictionary<string, BigInteger> _joltageCache = new();
+
+        private static BigInteger Joltage(BatteryBank bank, int[] indexes)
+        {
+            int[] key = new int[indexes.Length];
+            for (var i = 0; i < indexes.Length; i++)
+            {
+                key[i] = bank.Cells[indexes[i]];
+            }
+            var keyStr = string.Join("", key);
+
+            if (_joltageCache.ContainsKey(keyStr))
+            {
+                return _joltageCache[keyStr];
+            }
+
+            BigInteger result = ComputeJoltageFromIndexes(bank, indexes);
+            _joltageCache[keyStr] = result;
+            return result;
+        }
+
         private static BigInteger ComputeJoltageFromIndexes(BatteryBank bank, int[] indexes)
         {
             BigInteger joltage = 0;
@@ -131,7 +150,8 @@ namespace Day_03
             for (var y = 0; y < digits; y++)
             {
                 var currentDigit = bank.Cells[indexes[y]];
-                joltage += currentDigit * (long)Math.Pow(10, digits - y - 1);
+
+                joltage += currentDigit * Pow10(digits - y - 1);
             }
 
             return joltage;
@@ -156,7 +176,7 @@ namespace Day_03
 
         public static BigInteger Combinations(BigInteger n, BigInteger k)
         {
-            Log($"[Combinations] Calculating C({n},{k})");
+            Logger.Log($"[Combinations] Calculating C({n},{k})");
             // if (k > n)
             //     return 0;
             // if (k == 0 || k == n)
@@ -180,7 +200,7 @@ namespace Day_03
             return numerator / denominator;
         }
 
-        private static async Task<BigInteger> BankJoltageTwoAsync(BatteryBank bank, int digits = 2)
+        private static BigInteger BankJoltageTwoAsync(BatteryBank bank, int digits = 2)
         {
             if (digits > bank.Size)
             {
@@ -189,11 +209,13 @@ namespace Day_03
                 );
             }
 
-            Log($"[BankJoltageTwo] ---- Starting calculation for bank {bank} with digits {digits}");
+            Logger.Log(
+                $"[BankJoltageTwo] ---- Starting calculation for bank {bank} with digits {digits}"
+            );
 
             // compute the number of combinations of digits numbers in bank.Size
             var combinations = Combinations((BigInteger)bank.Size, (BigInteger)digits);
-            Log($"[BankJoltageTwo] ---- Number of combinations: {combinations}");
+            Logger.Log($"[BankJoltageTwo] ---- Number of combinations: {combinations}");
 
             // init
             int[] indexes = InitIndexes(bank.Size, digits);
@@ -203,13 +225,14 @@ namespace Day_03
             do
             {
                 count++;
-                Log(
+                Logger.Log(
                     $"    [BankJoltageTwo] #{count} current indexes: [{string.Join(",", indexes)}]"
                 );
-                joltage = BigInteger.Max(joltage, ComputeJoltageFromIndexes(bank, indexes));
+
+                joltage = BigInteger.Max(joltage, Joltage(bank, indexes));
             } while (IncrementIndexes(indexes, maxIndex));
-            Log($"  [BankJoltageTwo] made {count} iterations.");
-            Log($"  [BankJoltageTwo] ---> Return joltage: {joltage}");
+            Logger.Log($"  [BankJoltageTwo] made {count} iterations.");
+            Logger.Log($"  [BankJoltageTwo] ---> Return joltage: {joltage}");
             return joltage;
         }
 

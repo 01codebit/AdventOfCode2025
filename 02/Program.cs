@@ -1,5 +1,6 @@
 using Common;
 using Model;
+using Utils;
 
 namespace Day_02
 {
@@ -7,7 +8,6 @@ namespace Day_02
     {
         private static long _result = 0;
         private static List<LongRange> _ranges = [];
-        private static bool _debug = false;
 
         private static void PrintResult()
         {
@@ -16,15 +16,14 @@ namespace Day_02
 
         public static async Task Run(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
                 throw new ArgumentException("Please provide the input file path as an argument.");
             }
 
             var filePath = args[0];
-            _debug = args[1] == "debug";
 
-            _ranges = await Utils.FileUtils.ReadListFromFileAsync<LongRange>(filePath, ',', _debug);
+            _ranges = await Utils.FileUtils.ReadListFromFileAsync<LongRange>(filePath, ',');
 
             PartOneCount();
             Console.WriteLine("[Program.Run] Part One:");
@@ -43,13 +42,11 @@ namespace Day_02
             {
                 for (var i = range.Start; i <= range.End; i++)
                 {
-                    if (_debug)
-                        Console.WriteLine($"Counting number: {i}");
+                    Logger.Log($"Counting number: {i}");
 
                     if (!IsValid(i))
                     {
-                        if (_debug)
-                            Console.WriteLine($"  Invalid number found: {i}");
+                        Logger.Log($"  Invalid number found: {i}");
                         _result += i;
                     }
                 }
@@ -78,13 +75,11 @@ namespace Day_02
             {
                 for (var i = range.Start; i <= range.End; i++)
                 {
-                    if (_debug)
-                        Console.WriteLine($"Counting number: {i}");
+                    Logger.Log($"Counting number: {i}");
 
                     if (!IsValidPartTwo(i))
                     {
-                        if (_debug)
-                            Console.WriteLine($"  Invalid number found: {i}");
+                        Logger.Log($"  Invalid number found: {i}");
                         _result += i;
                     }
                 }

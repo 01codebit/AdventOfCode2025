@@ -1,5 +1,6 @@
 ﻿using Common;
 using Model;
+using Utils;
 
 namespace Day_01
 {
@@ -10,7 +11,6 @@ namespace Day_01
         private static int _startingValue = 50;
         private static int _currentValue = 0;
         private static int _result = 0;
-        private static bool _debug = false;
 
         private static void PrintResult()
         {
@@ -19,18 +19,16 @@ namespace Day_01
 
         public static async Task Run(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
                 throw new ArgumentException("Please provide the input file path as an argument.");
             }
 
             var filePath = args[0];
-            _debug = args[1] == "debug";
 
             _rotations = await Utils.FileUtils.ReadListFromFileAsync<Rotation>(
                 filePath,
-                ['\r', '\n'],
-                false
+                ['\r', '\n']
             );
 
             PartOneCount();
@@ -77,11 +75,8 @@ namespace Day_01
         {
             _currentValue = _startingValue;
 
-            if (_debug)
-            {
-                Console.WriteLine($"Part Two --------------------------------------");
-                Console.WriteLine($"  - The dial starts by pointing at {_currentValue}.");
-            }
+            Logger.Log($"Part Two --------------------------------------");
+            Logger.Log($"  - The dial starts by pointing at {_currentValue}.");
 
             foreach (var rotation in _rotations)
             {
@@ -104,19 +99,15 @@ namespace Day_01
                     _currentValue %= _maxValue;
                 }
 
-                if (_debug)
-                {
-                    string msg = $"  - The dial is rotated {rotation} to point at {_currentValue}";
-                    msg += passes > 0 ? $"; during this rotation it points at 0 {passes}." : ".";
-                    Console.WriteLine(msg);
-                }
+                string msg = $"  - The dial is rotated {rotation} to point at {_currentValue}";
+                msg += passes > 0 ? $"; during this rotation it points at 0 {passes}." : ".";
+                Logger.Log(msg);
 
                 if (_currentValue == 0)
                 {
-                    if (_debug)
-                        Console.WriteLine(
-                            $"    - The dial is rotated {rotation} to point at {_currentValue}."
-                        );
+                    Logger.Log(
+                        $"    - The dial is rotated {rotation} to point at {_currentValue}."
+                    );
                     _result++;
                 }
             }

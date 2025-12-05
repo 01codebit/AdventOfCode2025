@@ -1,5 +1,5 @@
 ﻿using System;
-using Day_01;
+using Utils;
 
 namespace AOC2025
 {
@@ -9,21 +9,26 @@ namespace AOC2025
 
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("[AOC2025.Start] -------------------------------");
+            Logger.LogLine("[AOC2025.Start] -------------------------------");
 
             if (args.Length < 1)
             {
-                Console.WriteLine("Please provide the day number as a command-line argument.");
+                Logger.LogLine("Please provide the day number as a command-line argument.");
             }
             else
             {
                 var day = args[0];
-                Console.WriteLine($"[Program.Main] Running Day {day} solution...");
+                Logger.LogLine($"[Program.Main] Running Day {day} solution...");
 
                 _ = int.TryParse(day, out int msg);
 
                 var fn = args.Length > 1 ? args[1] : _defaultFileName;
                 var debug = args.Length > 2 ? args[2] : "";
+
+                if (debug == "--debug" || debug == "-d")
+                {
+                    Logger.Debug = true;
+                }
 
                 var currentFolder = Directory.GetCurrentDirectory();
 
@@ -31,10 +36,10 @@ namespace AOC2025
                 if (!currentFolder.EndsWith($"\\{paddedDay}\\"))
                     currentFolder += $"\\{paddedDay}\\";
 
-                Console.WriteLine($"[Program.Main] Current folder: {currentFolder}");
+                Logger.LogLine($"[Program.Main] Current folder: {currentFolder}");
                 var filePath = Path.Combine(currentFolder, fn);
 
-                string[] fnArgs = [filePath, debug];
+                string[] fnArgs = [filePath];
 
                 switch (msg)
                 {
@@ -49,14 +54,14 @@ namespace AOC2025
                         break;
                     // Add additional days here as they are implemented
                     default:
-                        Console.WriteLine(
+                        Logger.LogLine(
                             "Invalid day number provided or day not yet implemented."
                         );
                         break;
                 }
             }
 
-            Console.WriteLine("[AOC2025.End] ---------------------------------");
+            Logger.LogLine("[AOC2025.End] ---------------------------------");
         }
     }
 }

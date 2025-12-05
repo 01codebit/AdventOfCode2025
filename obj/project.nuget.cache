@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "7k9pY1/rmFc=",
+  "dgSpecHash": "FYbzeZKV1Xg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\lumas\\Documents\\Programming\\AOC\\2025\\AOC2025.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\lumas\\source\\repos\\01codebit\\AdventOfCode2025\\AOC2025.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\lumas\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.11\\microsoft.netcore.app.ref.9.0.11.nupkg.sha512",
+    "C:\\Users\\lumas\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.11\\microsoft.windowsdesktop.app.ref.9.0.11.nupkg.sha512",
+    "C:\\Users\\lumas\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.11\\microsoft.aspnetcore.app.ref.9.0.11.nupkg.sha512",
+    "C:\\Users\\lumas\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.11\\microsoft.netcore.app.host.win-x64.9.0.11.nupkg.sha512"
+  ],
   "logs": []
 }

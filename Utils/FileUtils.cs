@@ -19,11 +19,7 @@ public static class FileUtils
         return content;
     }
 
-    public static async Task<List<T>> ReadListFromFileAsync<T>(
-        string filePath,
-        char[] separators,
-        bool debug = false
-    )
+    public static async Task<List<T>> ReadListFromFileAsync<T>(string filePath, char[] separators)
         where T : Common.IReadableString<T>
     {
         Console.WriteLine(
@@ -51,13 +47,9 @@ public static class FileUtils
         return results;
     }
 
-    public static async Task<List<T>> ReadListFromFileAsync<T>(
-        string filePath,
-        char separator,
-        bool debug = false
-    )
+    public static async Task<List<T>> ReadListFromFileAsync<T>(string filePath, char separator)
         where T : Common.IReadableString<T>
     {
-        return await ReadListFromFileAsync<T>(filePath, new[] { separator }, debug);
+        return await ReadListFromFileAsync<T>(filePath, new[] { separator });
     }
 }
