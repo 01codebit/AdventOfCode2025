@@ -84,8 +84,8 @@ namespace Day_03
             foreach (var bank in _banks)
             {
                 b++;
-                Console.WriteLine($"[Program.PartTwoCount] ---- Processing bank #{b}/{_banks.Count}");
-                var j = BankJoltageTwoAsync(bank, digits);
+                Logger.Log($"[Program.PartTwoCount] ---- Processing bank #{b}/{_banks.Count}");
+                var j = BankJoltageTwo(bank, digits);
                 Logger.Log($"[Program.PartTwoCount] Bank {bank} joltage calculated: {j}");
                 _resultTwo += j;
             }
@@ -121,27 +121,6 @@ namespace Day_03
             return result;
         }
 
-        private static Dictionary<string, BigInteger> _joltageCache = new();
-
-        private static BigInteger Joltage(BatteryBank bank, int[] indexes)
-        {
-            int[] key = new int[indexes.Length];
-            for (var i = 0; i < indexes.Length; i++)
-            {
-                key[i] = bank.Cells[indexes[i]];
-            }
-            var keyStr = string.Join("", key);
-
-            if (_joltageCache.ContainsKey(keyStr))
-            {
-                return _joltageCache[keyStr];
-            }
-
-            BigInteger result = ComputeJoltageFromIndexes(bank, indexes);
-            _joltageCache[keyStr] = result;
-            return result;
-        }
-
         private static BigInteger ComputeJoltageFromIndexes(BatteryBank bank, int[] indexes)
         {
             BigInteger joltage = 0;
@@ -157,50 +136,7 @@ namespace Day_03
             return joltage;
         }
 
-        private static BigInteger Factorial(BigInteger number)
-        {
-            if (number < 0)
-            {
-                throw new ArgumentException("Number must be non-negative");
-            }
-
-            BigInteger result = 1;
-            for (BigInteger i = 2; i <= number; i++)
-            {
-                result *= i;
-            }
-
-            Console.WriteLine($"Factorial of {number} is {result}");
-            return result;
-        }
-
-        public static BigInteger Combinations(BigInteger n, BigInteger k)
-        {
-            Logger.Log($"[Combinations] Calculating C({n},{k})");
-            // if (k > n)
-            //     return 0;
-            // if (k == 0 || k == n)
-            //     return 1;
-
-            // BigInteger num = Factorial(n);
-            // BigInteger denom = Factorial(k) * Factorial(n - k);
-
-            // Log($"[Combinations] C({n},{k}) = {num} / {denom} = {num / denom}");
-            // return num / denom;
-
-            BigInteger numerator = 1;
-            BigInteger denominator = 1;
-
-            for (int i = 0; i < k; i++)
-            {
-                numerator *= (n - i);
-                denominator *= (i + 1);
-            }
-
-            return numerator / denominator;
-        }
-
-        private static BigInteger BankJoltageTwoAsync(BatteryBank bank, int digits = 2)
+        private static BigInteger BankJoltageTwo(BatteryBank bank, int digits = 2)
         {
             if (digits > bank.Size)
             {
@@ -213,58 +149,35 @@ namespace Day_03
                 $"[BankJoltageTwo] ---- Starting calculation for bank {bank} with digits {digits}"
             );
 
-            // compute the number of combinations of digits numbers in bank.Size
-            var combinations = Combinations((BigInteger)bank.Size, (BigInteger)digits);
-            Logger.Log($"[BankJoltageTwo] ---- Number of combinations: {combinations}");
-
             // init
             int[] indexes = InitIndexes(bank.Size, digits);
             BigInteger joltage = 0;
-            var maxIndex = bank.Size - 1;
-            var count = 0;
-            do
-            {
-                count++;
-                Logger.Log(
-                    $"    [BankJoltageTwo] #{count} current indexes: [{string.Join(",", indexes)}]"
-                );
 
-                joltage = BigInteger.Max(joltage, Joltage(bank, indexes));
-            } while (IncrementIndexes(indexes, maxIndex));
-            Logger.Log($"  [BankJoltageTwo] made {count} iterations.");
+            int startIndex = 0;
+            for (var i = 0; i < indexes.Length; i++)
+            {
+                int idx = FindMaxBetween(startIndex, bank.Size - (indexes.Length - i), bank.Cells);
+                indexes[i] = idx;
+                startIndex = idx + 1;
+            }
+
+            joltage = ComputeJoltageFromIndexes(bank, indexes);
             Logger.Log($"  [BankJoltageTwo] ---> Return joltage: {joltage}");
+
             return joltage;
         }
 
-        private static bool IncrementIndexes(int[] indexes, int maxIndex)
+        private static int FindMaxBetween(int start, int end, int[] array)
         {
-            var maxFirstIndex = maxIndex - indexes.Length + 1;
-            if (indexes[0] == maxFirstIndex)
+            int maxIndex = start;
+            for (int i = start + 1; i <= end && i < array.Length; i++)
             {
-                return false;
-            }
-
-            var currentIndex = indexes.Length - 1;
-            for (var i = 0; i < indexes.Length - 1; i++)
-            {
-                if (indexes[i] < indexes[i + 1] - 1)
+                if (array[i] > array[maxIndex])
                 {
-                    currentIndex = i;
-                    break;
+                    maxIndex = i;
                 }
             }
-            indexes[currentIndex]++;
-            if (currentIndex == indexes.Length - 1 && indexes[currentIndex] > maxIndex)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < currentIndex; i++)
-            {
-                indexes[i] = i;
-            }
-
-            return true;
+            return maxIndex;
         }
     }
 }
