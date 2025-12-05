@@ -3,7 +3,7 @@ using Utils;
 
 namespace AOC2025
 {
-    public static class Program
+    public static class MainProgram
     {
         private static string _defaultFileName = "input_test.txt";
 
@@ -18,7 +18,7 @@ namespace AOC2025
             else
             {
                 var day = args[0];
-                Logger.LogLine($"[Program.Main] Running Day {day} solution...");
+                Logger.LogLine($"[MainProgram.Main] Running Day {day} solution...");
 
                 _ = int.TryParse(day, out int msg);
 
@@ -36,7 +36,7 @@ namespace AOC2025
                 if (!currentFolder.EndsWith($"\\{paddedDay}\\"))
                     currentFolder += $"\\{paddedDay}\\";
 
-                Logger.LogLine($"[Program.Main] Current folder: {currentFolder}");
+                Logger.LogLine($"[MainProgram.Main] Current folder: {currentFolder}");
                 var filePath = Path.Combine(currentFolder, fn);
 
                 string[] fnArgs = [filePath];
@@ -55,9 +55,12 @@ namespace AOC2025
                     case 4:
                         await Day_04.Program.Run(fnArgs);
                         break;
+                    case 5:
+                        await Day_05.Program.Run(fnArgs);
+                        break;
                     // Add additional days here as they are implemented
                     default:
-                        Logger.LogLine("Invalid day number provided or day not yet implemented.");
+                        Logger.LogError("Invalid day number provided or day not yet implemented.");
                         break;
                 }
             }

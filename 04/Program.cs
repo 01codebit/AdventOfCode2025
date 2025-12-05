@@ -79,23 +79,13 @@ namespace Day_04
             }
         }
 
-        private struct Coord(int row, int col)
-        {
-            public int Row { get; set; } = row;
-            public int Col { get; set; } = col;
-        }
-
-        private static List<Coord> ToRemove = [];
-
         private static Dictionary<int, List<int>> ToRemoveByRow = [];
-
 
         private static void PartTwoCount()
         {
             while (true)
             {
                 int toRemove = 0;
-                ToRemove.Clear();
                 ToRemoveByRow.Clear();
 
                 for (var row = 0; row < _map.Count; row++)
@@ -133,9 +123,6 @@ namespace Day_04
                             }
                             if (neighbors < 4)
                             {
-                                // Logger.Log($"--- FOUND ({row}, {col})");
-                                ToRemove.Add(new Coord(row, col));
-
                                 if (!ToRemoveByRow.ContainsKey(row))
                                 {
                                     ToRemoveByRow.Add(row, new List<int>());

@@ -21,10 +21,7 @@ namespace Utils
 
         public static void LogError(string message)
         {
-            if (Debug)
-            {
-                Console.WriteLine($"ERROR: {message}");
-            }
+            Console.WriteLine($"*** ERROR ***: {message}");
         }
     }
 }
