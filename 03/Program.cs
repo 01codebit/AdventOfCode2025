@@ -27,25 +27,25 @@ namespace Day_03
                 ['\r', '\n']
             );
 
-            Console.WriteLine("[Program.Run] Part One:");
+            Logger.LogLine("[Program.Run] Part One:");
             PartOneCount();
-            Console.WriteLine($"[Program.PrintResult] Result: {_result}");
+            Logger.LogLine($"[Program.PrintResult] Result: {_result}");
 
             var digits = 12;
 
-            Console.WriteLine("[Program.Run] Part Two:");
+            Logger.LogLine("[Program.Run] Part Two:");
             PartTwoCount(digits);
-            Console.WriteLine($"[Program.PrintResult] Result: {_resultTwo}");
+            Logger.LogLine($"[Program.PrintResult] Result: {_resultTwo}");
 
             if (digits == 2)
             {
                 if (_resultTwo == _result)
                 {
-                    Console.WriteLine("[Program.Run] SUCCESS !!!");
+                    Logger.LogLine("[Program.Run] SUCCESS !!!");
                 }
                 else
                 {
-                    Console.WriteLine("[Program.Run] FAILURE !!!");
+                    Logger.LogLine("[Program.Run] FAILURE !!!");
                 }
             }
         }

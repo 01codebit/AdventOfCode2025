@@ -11,7 +11,7 @@ namespace Day_02
 
         private static void PrintResult()
         {
-            Console.WriteLine($"[Program.PrintResult] Result: {_result}");
+            Logger.LogLine($"[Program.PrintResult] Result: {_result}");
         }
 
         public static async Task Run(string[] args)
@@ -26,13 +26,13 @@ namespace Day_02
             _ranges = await Utils.FileUtils.ReadListFromFileAsync<LongRange>(filePath, ',');
 
             PartOneCount();
-            Console.WriteLine("[Program.Run] Part One:");
+            Logger.LogLine("[Program.Run] Part One:");
             PrintResult();
 
             _result = 0; // Reset result for part two
 
             PartTwoCount();
-            Console.WriteLine("[Program.Run] Part Two:");
+            Logger.LogLine("[Program.Run] Part Two:");
             PrintResult();
         }
 
