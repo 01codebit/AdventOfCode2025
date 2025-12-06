@@ -10,6 +10,8 @@ namespace Day_05
         private static long _result = 0;
         private static long _resultTwo = 0;
 
+        private static IngredientsDB _db;
+
         public static async Task Run(string[] args)
         {
             if (args.Length < 1)
@@ -19,7 +21,9 @@ namespace Day_05
 
             var filePath = args[0];
 
-            // _map = await Utils.FileUtils.ReadListFromFileAsync(filePath, ['\r', '\n']);
+            var input = await Utils.FileUtils.ReadTextFileAsync(filePath);
+            _db = IngredientsDB.FromString(input);
+            Logger.Log($"[Program.Run] {_db}");
 
             Logger.LogLine("[Program.Run] Part One:");
             PartOneCount();
@@ -32,10 +36,19 @@ namespace Day_05
 
         private static void PartOneCount()
         {
+            foreach (var id in _db.Ids)
+            {
+                foreach (var r in _db.Ranges)
+                {
+                    if (id >= r.Start && id <= r.End)
+                    {
+                        _result++;
+                        break;
+                    }
+                }
+            }
         }
 
-        private static void PartTwoCount()
-        {
-        }
+        private static void PartTwoCount() { }
     }
 }
