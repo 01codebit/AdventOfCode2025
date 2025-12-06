@@ -1,3 +1,4 @@
+using System.Text;
 using Utils;
 
 namespace Model;
@@ -48,26 +49,26 @@ public struct IngredientsDB(List<LongRange> ranges, List<long> ids)
 
     public override string ToString()
     {
-        var text = "IngredientsDB: ";
+        StringBuilder bld = new();
 
-        text += "[Ranges: ";
+        bld.Append("[Ranges: ");
         int c = 0;
         foreach (var r in Ranges)
         {
             c++;
-            text += $"#{c}: " + r.ToString() + " ";
+            bld.Append($"#{c}: " + r.ToString() + " ");
         }
-        text += "]";
+        bld.Append("]");
 
-        text += "[Ids: ";
+        bld.Append("[Ids: ");
         c = 0;
         foreach (var x in Ids)
         {
             c++;
-            text += $"#{c}: {x} ";
+            bld.Append($"#{c}: {x} ");
         }
-        text += "]";
+        bld.Append("]");
 
-        return text;
+        return bld.ToString();
     }
 }
