@@ -51,17 +51,23 @@ namespace Day_05
 
         private static void PartTwoCount()
         {
-            Logger.LogLine($"---- Before reduction: {_db.Ranges.Count} ----");
-            ReduceRanges();
+            Logger.LogLine($"ranges before reduction: {_db.Ranges.Count}");
+            var prev = _db.Ranges.Count;
+            while (true)
+            {
+                ReduceRanges();
+                if (_db.Ranges.Count == prev)
+                    break;
+                prev = _db.Ranges.Count;
+            }
+            Logger.LogLine($"ranges after reduction: {_db.Ranges.Count}");
 
-            Logger.LogLine($"---- Result: {_db.Ranges.Count} ----");
             foreach (var r in _db.Ranges)
             {
                 Logger.Log($"  range: {r}: {r.End - r.Start + 1}");
                 _resultTwo += r.End - r.Start + 1;
             }
         }
-
 
         private static List<LongRange> CopyDBList()
         {
@@ -76,32 +82,42 @@ namespace Day_05
 
         private static void ReduceRanges()
         {
-            // List<LongRange> copy = []; //CopyDBList();
+            List<int> deletedIds = [];
+
             for (var i = 0; i < _db.Ranges.Count; i++)
             {
+                if (deletedIds.Contains(i))
+                    continue;
+
                 var rangeA = _db.Ranges[i];
-                Logger.Log($"  rangeA: {rangeA}");
+                Logger.Log($"--  current range ({i}): {rangeA}");
 
                 for (var j = 0; j < _db.Ranges.Count; j++)
                 {
-                    if (i == j)
+                    if (i == j || deletedIds.Contains(j))
                         continue;
 
                     var rangeB = _db.Ranges[j];
-                    Logger.Log($"    rangeA: {rangeA} - rangeB: {rangeB}");
+                    Logger.Log($"      compare with ({j}): {rangeB}");
 
                     if (CompareRanges(ref rangeA, rangeB))
                     {
-                        Logger.Log($"    modified rangeA: {rangeA}");
+                        Logger.Log($"      --> modified current range: {rangeA}");
                         _db.Ranges[i] = rangeA;
-                        _db.Ranges.RemoveAt(j);
+                        Logger.Log($"      --> deleted range in position {j}");
+                        deletedIds.Add(j);
                     }
                 }
-
-                // copy.Add(rangeA);
             }
 
-            // _db.Ranges = copy;
+            List<LongRange> output = [];
+            for (var k = 0; k < _db.Ranges.Count; k++)
+            {
+                if (deletedIds.Contains(k))
+                    continue;
+                output.Add(_db.Ranges[k]);
+            }
+            _db.Ranges = output;
         }
 
         private static bool CompareRanges(ref LongRange a, LongRange b)
