@@ -60,6 +60,9 @@ namespace AOC2025
                     case 6:
                         await Day_06.Program.Run(fnArgs);
                         break;
+                    case 7:
+                        await Day_07.Program.Run(fnArgs);
+                        break;
                     // Add additional days here as they are implemented
                     default:
                         Logger.LogError("Invalid day number provided or day not yet implemented.");
