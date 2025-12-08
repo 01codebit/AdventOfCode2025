@@ -2,7 +2,7 @@ namespace Models;
 
 public class Problem
 {
-    public List<long> Numbers = [];
+    public List<string> Numbers = [];
     public char Operand;
 
     public long Result()
@@ -10,10 +10,11 @@ public class Problem
         long r = Operand == '+' ? 0 : 1;
         foreach (var n in Numbers)
         {
+            var nn = long.Parse(n);
             if (Operand == '+')
-                r += n;
+                r += nn;
             else if (Operand == '*')
-                r *= n;
+                r *= nn;
         }
         return r;
     }
