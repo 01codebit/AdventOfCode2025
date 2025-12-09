@@ -4,7 +4,7 @@ using Utils;
 
 namespace Day_02
 {
-    public class Program : IRunnablePart
+    public class GiftShop : IRunnablePart
     {
         private static long _result = 0;
         private static List<LongRange> _ranges = [];

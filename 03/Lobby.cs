@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 using Common;
 using Model;
@@ -6,7 +5,7 @@ using Utils;
 
 namespace Day_03
 {
-    public class Program : IRunnablePart
+    public class Lobby : IRunnablePart
     {
         private static long _result = 0;
         private static BigInteger _resultTwo = 0;

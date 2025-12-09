@@ -1,13 +1,10 @@
-using System;
-using System.Numerics;
 using System.Text;
 using Common;
-using Model;
 using Utils;
 
 namespace Day_04
 {
-    public class Program : IRunnablePart
+    public class PrintingDepartment : IRunnablePart
     {
         private static long _result = 0;
         private static long _resultTwo = 0;

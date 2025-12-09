@@ -43,25 +43,28 @@ namespace AOC2025
                 switch (msg)
                 {
                     case 1:
-                        await Day_01.Program.Run(fnArgs);
+                        await Day_01.SecretEntrance.Run(fnArgs);
                         break;
                     case 2:
-                        await Day_02.Program.Run(fnArgs);
+                        await Day_02.GiftShop.Run(fnArgs);
                         break;
                     case 3:
-                        await Day_03.Program.Run(fnArgs);
+                        await Day_03.Lobby.Run(fnArgs);
                         break;
                     case 4:
-                        await Day_04.Program.Run(fnArgs);
+                        await Day_04.PrintingDepartment.Run(fnArgs);
                         break;
                     case 5:
-                        await Day_05.Program.Run(fnArgs);
+                        await Day_05.Cafeteria.Run(fnArgs);
                         break;
                     case 6:
-                        await Day_06.Program.Run(fnArgs);
+                        await Day_06.TrashCompactor.Run(fnArgs);
                         break;
                     case 7:
-                        await Day_07.Program.Run(fnArgs);
+                        await Day_07.Laboratories.Run(fnArgs);
+                        break;
+                    case 8:
+                        await Day_08.Playground.Run(fnArgs);
                         break;
                     // Add additional days here as they are implemented
                     default:

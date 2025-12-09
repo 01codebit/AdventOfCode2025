@@ -4,7 +4,7 @@ using Utils;
 
 namespace Day_01
 {
-    public class Program : IRunnablePart
+    public class SecretEntrance : IRunnablePart
     {
         private static List<Rotation> _rotations = [];
         private static int _maxValue = 100;

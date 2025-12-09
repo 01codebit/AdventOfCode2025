@@ -6,7 +6,7 @@ using Utils;
 
 namespace Day_06
 {
-    public class Program : IRunnablePart
+    public class TrashCompactor : IRunnablePart
     {
         private static long _result = 0;
         private static BigInteger _resultTwo = 0;

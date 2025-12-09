@@ -4,7 +4,7 @@ using Utils;
 
 namespace Day_07
 {
-    public class Program : IRunnablePart
+    public class Laboratories : IRunnablePart
     {
         private static long _result = 0;
         private static BigInteger _resultTwo = 0;

@@ -5,7 +5,7 @@ using Utils;
 
 namespace Day_05
 {
-    public class Program : IRunnablePart
+    public class Cafeteria : IRunnablePart
     {
         private static long _result = 0;
         private static BigInteger _resultTwo = 0;
