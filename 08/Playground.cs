@@ -27,11 +27,11 @@ namespace Day_08
 
             InitDistances();
 
-            for (var o = 0; o < 20; o++)
-            {
-                var s = _segments[o];
-                Logger.LogLine($"segment #{o}: {s} [{_positions[s.A]} - {_positions[s.B]}]");
-            }
+            // for (var o = 0; o < 20; o++)
+            // {
+            //     var s = _segments[o];
+            //     Logger.LogLine($"segment #{o}: {s} [{_positions[s.A]} - {_positions[s.B]}]");
+            // }
 
             FindCircuits(10);
 
@@ -56,6 +56,8 @@ namespace Day_08
                     InsertOrdered(seg);
                 }
             }
+
+            Logger.LogLine($"[InitDistances] found {_segments.Count} segments");
         }
 
         private static void InsertOrdered(Segment s)
@@ -73,44 +75,44 @@ namespace Day_08
 
         private static void FindCircuits(int limit)
         {
-            List<List<Segment>> circuits = [];
-            circuits.Add([_segments[0]]);
-            Logger.Log($"added new list with segment: {_segments[0]}");
+            List<List<int>> circuits = [];
+            circuits.Add([_segments[0].A, _segments[0].B]);
+            Logger.Log($"[FindCircuits] START - added new list with segment: {_segments[0]}");
 
-            limit = limit < _segments.Count ? limit : _segments.Count;
+            limit = limit + 1 < _segments.Count ? limit + 1 : _segments.Count;
 
-            var found = -1;
+            var found = false;
             for (var i = 1; i < limit; i++)
             {
                 var curr = _segments[i];
                 for (var j = 0; j < circuits.Count; j++)
                 {
-                    foreach (var segment in circuits[j])
+                    if (circuits[j].Contains(curr.A) && circuits[j].Contains(curr.B))
+                        continue;
+
+                    if (circuits[j].Contains(curr.A) || circuits[j].Contains(curr.B))
                     {
-                        if (
-                            curr.A == segment.A
-                            || curr.A == segment.B
-                            || curr.B == segment.A
-                            || curr.B == segment.B
-                        )
+                        if (found)
                         {
-                            found = j;
-                            break;
+                            if (circuits[j].Contains(curr.A)) circuits[j].Remove(curr.A);
+                            if (circuits[j].Contains(curr.B)) circuits[j].Remove(curr.B);
                         }
-                    }
-                    if (found >= 0)
-                    {
-                        circuits[j].Add(curr);
+
+                        found = true;
+
+                        if (!circuits[j].Contains(curr.A)) circuits[j].Add(curr.A);
+                        if (!circuits[j].Contains(curr.B)) circuits[j].Add(curr.B);
                         Logger.Log($"added segment: {curr}");
-                        found = -1;
-                        break;
-                    }
-                    else
-                    {
-                        circuits.Add([curr]);
-                        Logger.Log($"added new list with segment: {curr}");
                     }
                 }
+
+                if (!found)
+                {
+                    circuits.Add([curr.A, curr.B]);
+                    Logger.Log($"added new list with segment: {curr}");
+                }
+
+                found = false;
             }
 
             int[] largest3 = new int[3];

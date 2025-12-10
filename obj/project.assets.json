@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\lumas\\source\\repos\\01codebit\\AdventOfCode2025\\AOC2025.csproj",
+      "projectUniqueName": "C:\\Users\\lumas\\Documents\\Programming\\AOC\\2025\\AOC2025.csproj",
       "projectName": "AOC2025",
-      "projectPath": "C:\\Users\\lumas\\source\\repos\\01codebit\\AdventOfCode2025\\AOC2025.csproj",
+      "projectPath": "C:\\Users\\lumas\\Documents\\Programming\\AOC\\2025\\AOC2025.csproj",
       "packagesPath": "C:\\Users\\lumas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\lumas\\source\\repos\\01codebit\\AdventOfCode2025\\obj\\",
+      "outputPath": "C:\\Users\\lumas\\Documents\\Programming\\AOC\\2025\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -52,7 +52,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -68,30 +68,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[9.0.11, 9.0.11]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[9.0.11, 9.0.11]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.11, 9.0.11]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[9.0.11, 9.0.11]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
