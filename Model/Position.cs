@@ -14,11 +14,11 @@ public struct Segment(int indexA, int indexB, double value)
     }
 }
 
-public struct Position(int x, int y, int z) : IReadableString<Position>
+public struct Position(int xcoord, int ycoord, int zcoord) : IReadableString<Position>
 {
-    public int X { get; set; } = x;
-    public int Y { get; set; } = y;
-    public int Z { get; set; } = z;
+    public int X { get; set; } = xcoord;
+    public int Y { get; set; } = ycoord;
+    public int Z { get; set; } = zcoord;
 
     public static Position FromString(string input)
     {
@@ -37,6 +37,6 @@ public struct Position(int x, int y, int z) : IReadableString<Position>
 
     public override string ToString()
     {
-        return $"Position: ({x}, {y}, {z})";
+        return $"Position: ({X}, {Y}, {Z})";
     }
 }

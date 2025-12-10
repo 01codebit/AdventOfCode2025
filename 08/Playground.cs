@@ -11,6 +11,7 @@ namespace Day_08
         private static long _result = 0;
         private static BigInteger _resultTwo = 0;
         private static List<Position> _positions = [];
+        private static List<Segment> _segments = [];
 
         public static async Task Run(string[] args)
         {
@@ -25,15 +26,15 @@ namespace Day_08
             Logger.Log($"[Program.Run]\n{string.Join('\n', _positions)}");
 
             InitDistances();
-            
+
             for (var o = 0; o < 20; o++)
             {
                 var s = _segments[o];
                 Logger.LogLine($"segment #{o}: {s} [{_positions[s.A]} - {_positions[s.B]}]");
             }
 
-            //FindCircuits(10);
-            
+            FindCircuits(10);
+
             Logger.LogLine("[Program.Run] Part One:");
             PartOneCount();
             Logger.LogLine($"[Program.PrintResult] Result: {_result}");
@@ -42,8 +43,6 @@ namespace Day_08
             PartTwoCount();
             Logger.LogLine($"[Program.PrintResult] Result: {_resultTwo}");
         }
-
-        private static List<Segment> _segments = [];
 
         private static void InitDistances()
         {
@@ -75,59 +74,65 @@ namespace Day_08
         private static void FindCircuits(int limit)
         {
             List<List<Segment>> circuits = [];
-            foreach (var seg in _segments)
-            {
-                if (circuits.Count == 0)
-                {
-                    var l = new List<Segment>();
-                    l.Add(seg);
-                    circuits.Add(l);
-                    continue;
-                }
+            circuits.Add([_segments[0]]);
+            Logger.Log($"added new list with segment: {_segments[0]}");
 
-                var found = false;
-                foreach (var circuit in circuits)
+            limit = limit < _segments.Count ? limit : _segments.Count;
+
+            var found = -1;
+            for (var i = 1; i < limit; i++)
+            {
+                var curr = _segments[i];
+                for (var j = 0; j < circuits.Count; j++)
                 {
-                    foreach (var segment in circuit)
+                    foreach (var segment in circuits[j])
                     {
                         if (
-                            seg.A == segment.A
-                            || seg.A == segment.B
-                            || seg.B == segment.A
-                            || seg.B == segment.B
+                            curr.A == segment.A
+                            || curr.A == segment.B
+                            || curr.B == segment.A
+                            || curr.B == segment.B
                         )
                         {
-                            circuit.Add(seg);
-                            found = true;
+                            found = j;
                             break;
                         }
                     }
-                    if (found)
+                    if (found >= 0)
+                    {
+                        circuits[j].Add(curr);
+                        Logger.Log($"added segment: {curr}");
+                        found = -1;
                         break;
+                    }
+                    else
+                    {
+                        circuits.Add([curr]);
+                        Logger.Log($"added new list with segment: {curr}");
+                    }
                 }
-
-                var l2 = new List<Segment>();
-                l2.Add(seg);
-                circuits.Add(l2);
-
-                limit--;
-                if (limit < 0)
-                    break;
             }
 
             int[] largest3 = new int[3];
             largest3[0] = 0;
             largest3[1] = 0;
             largest3[2] = 0;
+            var kkk = 0;
             foreach (var c in circuits)
             {
-Logger.LogLine($"circuit: {c.Count}");
-            
-                if (c.Count > largest3[0]) largest3[0] = c.Count;
-                else if (c.Count > largest3[1]) largest3[1] = c.Count;
-                else if (c.Count > largest3[2]) largest3[2] = c.Count;
+                Logger.LogLine($"Circuit: ({c.Count})[{string.Join(',', c)}]");
+                kkk += c.Count;
+
+                if (c.Count > largest3[0])
+                    largest3[0] = c.Count;
+                else if (c.Count > largest3[1])
+                    largest3[1] = c.Count;
+                else if (c.Count > largest3[2])
+                    largest3[2] = c.Count;
             }
-Logger.LogLine($"largest: {largest3[0]} {largest3[1]} {largest3[2]}");
+            Logger.LogLine($"largest: {largest3[0]} {largest3[1]} {largest3[2]}");
+            Logger.LogLine($"kkk: {kkk}");
+
             _result = largest3[0] * largest3[1] * largest3[2];
         }
 
