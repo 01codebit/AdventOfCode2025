@@ -2,23 +2,12 @@ using Common;
 
 namespace Model;
 
-public struct Segment(int indexA, int indexB, double value)
-{
-    public int A { get; set; } = indexA;
-    public int B { get; set; } = indexB;
-    public double Value { get; set; } = value;
-
-    public override string ToString()
-    {
-        return $"Segment: {A}-{B} ({Value})";
-    }
-}
-
-public struct Position(int xcoord, int ycoord, int zcoord) : IReadableString<Position>
+public class Position(int xcoord, int ycoord, int zcoord) : IReadableString<Position>
 {
     public int X { get; set; } = xcoord;
     public int Y { get; set; } = ycoord;
     public int Z { get; set; } = zcoord;
+    public int Circuit { get; set; } = 0;
 
     public static Position FromString(string input)
     {
@@ -37,6 +26,6 @@ public struct Position(int xcoord, int ycoord, int zcoord) : IReadableString<Pos
 
     public override string ToString()
     {
-        return $"Position: ({X}, {Y}, {Z})";
+        return $"Position: ({X}, {Y}, {Z}) [circuit: {Circuit}]";
     }
 }
