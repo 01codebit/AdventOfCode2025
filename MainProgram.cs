@@ -75,6 +75,9 @@ namespace AOC2025
                         string[] fnArgs2 = [fnArgs[0], limitValue];
                         await Day_08.Playground.Run(fnArgs2);
                         break;
+                    case 9:
+                        await Day_09.MovieTheater.Run(fnArgs);
+                        break;
                     // Add additional days here as they are implemented
                     default:
                         Logger.LogError("Invalid day number provided or day not yet implemented.");
