@@ -35,7 +35,7 @@ namespace Day_08
 
             Logger.LogLine("[Program.Run] Part Two:");
             PartTwoCount();
-            Logger.LogLine($"[Program.PrintResult] Result: {_resultTwo}");
+            Logger.LogLine($"[Program.PrintResult] Result Two: {_resultTwo}");
         }
 
         private static void InitDistances(int limit)
@@ -61,6 +61,8 @@ namespace Day_08
         private static void OrderSegments(int limit)
         {
             var klimit = limit < _segments.Count ? limit : _segments.Count;
+            if (limit == 0)
+                klimit = _segments.Count;
 
             for (int k = 0; k < klimit; k++)
             {
@@ -84,9 +86,11 @@ namespace Day_08
         private static void InitCircuits()
         {
             Logger.LogLine($"[InitCircuits]");
+            _circuits.Clear();
             for (var i = 0; i < _positions.Count; i++)
             {
                 _positions[i].Circuit = i;
+                _circuits.Add(i, []);
             }
         }
 
@@ -94,35 +98,64 @@ namespace Day_08
         {
             Logger.LogLine($"[FindCircuits] limit: {limit}");
             limit = limit < _orderedSegments.Count ? limit : _orderedSegments.Count;
+            if (limit == 0)
+                limit = _orderedSegments.Count;
 
-            for (var i = 1; i < limit; i++)
+            for (var i = 0; i < limit; i++)
             {
                 var curr = _orderedSegments[i];
+                // Logger.LogLine(
+                //     $"[FindCircuits] current[{i + 1}/{limit}]: {curr} [ax: {_positions[curr.A].X} - bx: {_positions[curr.B].X}]"
+                // );
 
                 var circuitId = _positions[curr.A].Circuit;
+                if (!_circuits.ContainsKey(circuitId))
+                    _circuits.Add(circuitId, []);
+                if (!_circuits[circuitId].Contains(curr.A))
+                    _circuits[circuitId].Add(curr.A);
+
                 var oldCircuitId = _positions[curr.B].Circuit;
-                _positions[curr.B].Circuit = circuitId;
 
-                var ncount = 2;
-
-                foreach (var pos in _positions)
+                if (oldCircuitId != circuitId)
                 {
-                    if (pos.Circuit == oldCircuitId)
+                    _positions[curr.B].Circuit = circuitId;
+                    if (!_circuits[circuitId].Contains(curr.B))
+                        _circuits[circuitId].Add(curr.B);
+                    if (_circuits.ContainsKey(oldCircuitId))
+                        _circuits[oldCircuitId].Remove(curr.B);
+
+                    for (var k = 0; k < _positions.Count; k++)
                     {
-                        ncount++;
-                        pos.Circuit = circuitId;
+                        if (_positions[k].Circuit == oldCircuitId)
+                        {
+                            _positions[k].Circuit = circuitId;
+                            _circuits[circuitId].Add(k);
+                            if (_circuits.ContainsKey(oldCircuitId))
+                                _circuits[oldCircuitId].Remove(k);
+                        }
                     }
+
+                    if (_circuits.ContainsKey(oldCircuitId) && _circuits[oldCircuitId].Count == 0)
+                    {
+                        _circuits.Remove(oldCircuitId);
+                    }
+                }
+
+                if (i > 2 && _circuits.Keys.Count == 1)
+                {
+                    Logger.LogLine(
+                        $"[FindCircuits] found one circuit in {i} cycles. Last connection: {_positions[curr.A].X}, {_positions[curr.B].X}"
+                    );
+                    Logger.LogLine($"[FindCircuits] {curr}");
+                    _resultTwo =
+                        new BigInteger(_positions[curr.A].X) * new BigInteger(_positions[curr.B].X);
+                    break;
                 }
             }
 
-            for (var i = 0; i < _positions.Count; i++)
-            {
-                var pos = _positions[i];
-                if (!_circuits.ContainsKey(pos.Circuit))
-                    _circuits.Add(pos.Circuit, []);
-                _circuits[pos.Circuit].Add(i);
-            }
             Logger.LogLine($"[FindCircuits] found {_circuits.Keys.Count} circuits");
+            // foreach (var c in _circuits.Keys)
+            //     Logger.Log($"  Circuit[{c}]: {string.Join(',', _circuits[c])}");
         }
 
         private static void SelectCircuits()
@@ -193,6 +226,15 @@ namespace Day_08
             SelectCircuits();
         }
 
-        private static void PartTwoCount() { }
+        private static void PartTwoCount()
+        {
+            _segments.Clear();
+            _orderedSegments.Clear();
+
+            InitDistances(0);
+            OrderSegments(10000);
+            InitCircuits();
+            FindCircuits(0);
+        }
     }
 }
