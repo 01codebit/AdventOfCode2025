@@ -1,4 +1,6 @@
-﻿using Utils;
+﻿using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+using Utils;
 
 namespace AOC2025
 {
@@ -64,7 +66,14 @@ namespace AOC2025
                         await Day_07.Laboratories.Run(fnArgs);
                         break;
                     case 8:
-                        await Day_08.Playground.Run(fnArgs);
+                        var limit = args.Length > 3 ? args[3] : args.Length > 2 ? args[2] : "";
+                        var limitValue = "10";
+                        if (limit.StartsWith("-l"))
+                        {
+                            limitValue = limit.Replace("-l", "").Trim();
+                        }
+                        string[] fnArgs2 = [fnArgs[0], limitValue];
+                        await Day_08.Playground.Run(fnArgs2);
                         break;
                     // Add additional days here as they are implemented
                     default:
