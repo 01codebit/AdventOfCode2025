@@ -135,7 +135,7 @@ namespace Day_09
             }
             Logger.LogLine($"[PrintMap] maxCoord: {maxCoord}");
 
-            char[,] map = new char[maxCoord+1, maxCoord+1];
+            char[,] map = new char[maxCoord + 1, maxCoord + 1];
             for (int i = 0; i <= maxCoord; i++)
             {
                 for (int j = 0; j <= maxCoord; j++)
@@ -149,24 +149,57 @@ namespace Day_09
                 var a = _points[i];
                 var b = _points[j];
                 Logger.Log($":: {i} {j} A:({a.X},{a.Y}) B:({b.X},{b.Y})");
-                map[a.X, a.Y] = '#';
-                map[b.X, b.Y] = '#';
+                map[a.Y, a.X] = '#';
+                map[b.Y, b.X] = '#';
 
-                for (var x = a.X; x <= b.X; x++)
+                if (a.Y == b.Y)
                 {
-                    for (var y = a.Y; y <= b.Y; y++)
+                    var y = a.Y;
+                    for (var x = long.Min(a.X, b.X) + 1; x < long.Max(a.X, b.X); x++)
                     {
-                        map[x, y] = '#';
+                        map[y, x] = 'X';
+                    }
+                }
+                else if (a.X == b.X)
+                {
+                    var x = a.X;
+                    for (var y = long.Min(a.Y, b.Y) + 1; y < long.Max(a.Y, b.Y); y++)
+                    {
+                        map[y, x] = 'X';
                     }
                 }
             }
 
+            var xi = maxCoord / 2;
+            var inside = false;
+            for (var y = 0; y <= maxCoord; y++)
+            {
+                if (map[y, xi] == '.' && inside)
+                {
+                    map[y, xi] = 'O';
+                    break;
+                }
+                if (map[y, xi] == '#' || map[y, xi] == 'X')
+                {
+                    inside = true;
+                }
+            }
+
             Logger.Log("MAP:");
+            Console.Write("   ");
             for (var x = 0; x <= maxCoord; x++)
             {
-                for (var y = 0; y <= maxCoord; y++)
+                Console.Write(x < 10 ? $"{x}  " : $"{x} ");
+            }
+            Console.WriteLine();
+
+            for (var y = 0; y <= maxCoord; y++)
+            {
+                Console.Write(y < 10 ? $"{y}  " : $"{y} ");
+
+                for (var x = 0; x <= maxCoord; x++)
                 {
-                    Console.Write($"{map[x, y]}");
+                    Console.Write($"{map[y, x]}  ");
                 }
                 Console.WriteLine();
             }
